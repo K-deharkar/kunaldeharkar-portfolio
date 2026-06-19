@@ -18,7 +18,7 @@ const PROJECTS = {
       'Recognized at Impetus \'25 international project competition.'
     ],
     links: [
-      { label: 'Contact for Patent Info', href: 'mailto:deharkarkunal48@gmail.com?subject=Smart%20Grain%20Robot%20Patent', icon: 'fa-certificate' }
+      { label: 'Request Patent ', href: 'https://drive.google.com/file/d/1ZzILJOclTMCEHYNl-pA0UjUOIRqn9KXC/view?usp=sharing', icon: 'fa-certificate' }
     ]
   },
   'netflix-analysis': {
@@ -36,7 +36,7 @@ const PROJECTS = {
       'Delivered visual insights for platform content strategy.'
     ],
     links: [
-      { label: 'Request Report', href: 'mailto:deharkarkunal48@gmail.com?subject=Netflix%20Analysis%20Project', icon: 'fa-envelope' }
+      
     ]
   },
   'sales-dashboard': {
@@ -45,7 +45,7 @@ const PROJECTS = {
     tags: ['Power BI', 'DAX', 'Business Intelligence'],
     summary: 'Interactive Power BI dashboard tracking regional sales performance, revenue pipelines, and growth KPIs with custom DAX measures.',
     year: '2024',
-    role: 'BI Developer',
+    role: 'PowerBI Developer',
     tools: ['Power BI', 'DAX', 'Excel', 'SQL', 'Data Modeling'],
     highlights: [
       'Built multi-page dashboard with drill-down regional views.',
@@ -54,7 +54,7 @@ const PROJECTS = {
       'Optimized data model for fast refresh and filtering.'
     ],
     links: [
-      { label: 'Request Demo', href: 'mailto:deharkarkunal48@gmail.com?subject=Sales%20Dashboard%20Demo', icon: 'fa-chart-simple' }
+      
     ]
   },
   'hybrid-bearing': {
@@ -90,7 +90,7 @@ const PROJECTS = {
       'Presented as part of IEEE institute research initiatives.'
     ],
     links: [
-      { label: 'Request Paper', href: 'mailto:deharkarkunal48@gmail.com?subject=Secure%20Voting%20System%20Paper', icon: 'fa-file-pdf' }
+      { label: 'Request Paper', href: 'https://drive.google.com/file/d/1HUoPU9kaojZSADZGxLg11s6w9zr-UaSp/view?usp=sharing', icon: 'fa-file-pdf' }
     ]
   }
 };
