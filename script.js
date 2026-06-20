@@ -151,7 +151,7 @@ function initCustomCursor() {
   });
 
   function renderCursor() {
-    const lerpSpeed = 0.15;
+    const lerpSpeed = 0.2; // Slightly increased for smoother motion
     cursorX += (mouseX - cursorX) * lerpSpeed;
     cursorY += (mouseY - cursorY) * lerpSpeed;
 
@@ -185,15 +185,29 @@ function initBackgroundParallax() {
   const blobs = document.querySelectorAll('.blob');
   if (window.matchMedia('(hover: none)').matches) return;
 
+  let lastX = 0, lastY = 0;
+  let targetX = 0, targetY = 0;
+
   window.addEventListener('mousemove', (e) => {
-    const x = e.clientX / window.innerWidth - 0.5;
-    const y = e.clientY / window.innerHeight - 0.5;
+    targetX = e.clientX / window.innerWidth - 0.5;
+    targetY = e.clientY / window.innerHeight - 0.5;
+  });
+
+  // Smooth parallax animation loop
+  function updateParallax() {
+    const lerpSpeed = 0.08;
+    lastX += (targetX - lastX) * lerpSpeed;
+    lastY += (targetY - lastY) * lerpSpeed;
 
     blobs.forEach((blob, idx) => {
       const speed = (idx + 1) * 35;
-      blob.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+      blob.style.transform = `translate(${lastX * speed}px, ${lastY * speed}px)`;
     });
-  });
+
+    requestAnimationFrame(updateParallax);
+  }
+
+  updateParallax();
 }
 
 /* ==========================================================================
