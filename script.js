@@ -217,26 +217,44 @@ function initNavbarScroll() {
   const header = document.querySelector('header');
   if (!header) return;
 
-  window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 50);
+  cacheSectionOffsets();
+  window.addEventListener('resize', () => {
+    cacheSectionOffsets();
     highlightActiveNavLink();
   });
 
+  let isScrolling = false;
+  window.addEventListener('scroll', () => {
+    if (!isScrolling) {
+      window.requestAnimationFrame(() => {
+        header.classList.toggle('scrolled', window.scrollY > 50);
+        highlightActiveNavLink();
+        isScrolling = false;
+      });
+      isScrolling = true;
+    }
+  }, { passive: true });
+
   // Call once on load
   highlightActiveNavLink();
-  
-  // Also call on window resize to fix indicator position
-  window.addEventListener('resize', highlightActiveNavLink);
+}
+
+let sectionOffsets = [];
+function cacheSectionOffsets() {
+  const sections = document.querySelectorAll('section');
+  sectionOffsets = Array.from(sections).map(section => ({
+    id: section.getAttribute('id'),
+    offsetTop: section.offsetTop
+  }));
 }
 
 function highlightActiveNavLink() {
-  const sections = document.querySelectorAll('section');
   const navLinks = document.querySelectorAll('.nav-links a');
   let currentSection = '';
 
-  sections.forEach(section => {
+  sectionOffsets.forEach(section => {
     if (window.scrollY >= section.offsetTop - 150) {
-      currentSection = section.getAttribute('id');
+      currentSection = section.id;
     }
   });
 
@@ -247,6 +265,7 @@ function highlightActiveNavLink() {
   updateNavIndicator();
 }
 
+let navIndicatorState = { left: 0, width: 0, opacity: 0 };
 function updateNavIndicator() {
   const activeLink = document.querySelector('.nav-links a.active');
   const indicator = document.getElementById('nav-indicator');
@@ -256,10 +275,12 @@ function updateNavIndicator() {
     const linkRect = activeLink.getBoundingClientRect();
     const containerRect = navLinksContainer.getBoundingClientRect();
     
-    const left = linkRect.left - containerRect.left;
+    navIndicatorState.left = linkRect.left - containerRect.left;
+    navIndicatorState.width = linkRect.width;
+    navIndicatorState.opacity = 1;
     
-    indicator.style.width = `${linkRect.width}px`;
-    indicator.style.left = `${left}px`;
+    indicator.style.width = `${navIndicatorState.width}px`;
+    indicator.style.left = `${navIndicatorState.left}px`;
     indicator.style.opacity = '1';
   } else if (indicator) {
     indicator.style.opacity = '0';
@@ -597,9 +618,16 @@ function initScrollToTop() {
   const btn = document.getElementById('scroll-top-btn');
   if (!btn) return;
 
+  let isScrolling = false;
   window.addEventListener('scroll', () => {
-    btn.classList.toggle('visible', window.scrollY > 500);
-  });
+    if (!isScrolling) {
+      window.requestAnimationFrame(() => {
+        btn.classList.toggle('visible', window.scrollY > 500);
+        isScrolling = false;
+      });
+      isScrolling = true;
+    }
+  }, { passive: true });
 
   btn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

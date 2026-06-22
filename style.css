@@ -506,7 +506,7 @@ nav {
   display: flex;
   align-items: center;
   gap: 40px;
-  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: gap 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .nav-links {
@@ -548,7 +548,7 @@ nav {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   z-index: 0;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   opacity: 0;
   pointer-events: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -599,7 +599,7 @@ nav {
 .menu-btn.open .menu-btn-burger {
   transform: translateX(-50px);
   background: transparent;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .menu-btn.open .menu-btn-burger::before {
@@ -775,7 +775,7 @@ nav {
   left: 40px;
   top: 40px;
   transform-style: preserve-3d;
-  transition: all 0.4s ease;
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
 }
 
 .hexagon-face:hover {

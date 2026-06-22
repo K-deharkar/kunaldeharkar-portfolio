@@ -246,35 +246,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const elementsToTrack = document.querySelectorAll('.glass-panel, #custom-cursor');
     elementsToTrack.forEach(el => addTrackedElement(el));
 
+    // --- Cache DOM properties to prevent Layout Thrashing ---
+    let cachedElements = [];
+
+    function updateCache() {
+        cachedElements = trackedElements.map(item => {
+            const rect = item.dom.getBoundingClientRect();
+            const style = window.getComputedStyle(item.dom);
+            let br = parseFloat(style.borderRadius);
+            if (isNaN(br)) br = 0;
+            return {
+                item: item,
+                rect: {
+                    width: rect.width,
+                    height: rect.height,
+                    left: rect.left,
+                    top: rect.top + window.scrollY // Absolute top
+                },
+                borderRadius: br,
+                display: style.display,
+                isHeader: item.dom.tagName === 'HEADER',
+                closestHide: !!item.dom.closest('.hide')
+            };
+        });
+    }
+
+    // Wait a brief moment to ensure DOM layout is settled
+    setTimeout(updateCache, 100);
+
     function syncMeshes() {
-        trackedElements.forEach(item => {
+        const scrollY = window.scrollY;
+
+        cachedElements.forEach(cache => {
+            const item = cache.item;
+
             // For header, only show glass if scrolled
-            if (item.dom.tagName === 'HEADER' && !item.dom.classList.contains('scrolled')) {
+            if (cache.isHeader && !item.dom.classList.contains('scrolled')) {
                 item.mesh.visible = false;
                 return;
             }
-            // Check if element is hidden by parent (e.g. portfolio filter)
-            if (item.dom.closest('.hide') || getComputedStyle(item.dom).display === 'none') {
+            // Check if element is hidden
+            if (cache.closestHide || cache.display === 'none') {
                 item.mesh.visible = false;
                 return;
             }
             item.mesh.visible = true;
 
-            const rect = item.dom.getBoundingClientRect();
+            // Calculate current rect relative to viewport
+            const currentTop = cache.rect.top - scrollY;
             
             // Update Mesh Scale & Position
-            item.mesh.scale.set(rect.width, rect.height, 1);
-            item.mesh.position.x = rect.left + rect.width / 2;
-            item.mesh.position.y = window.innerHeight - (rect.top + rect.height / 2);
+            item.mesh.scale.set(cache.rect.width, cache.rect.height, 1);
+            item.mesh.position.x = cache.rect.left + cache.rect.width / 2;
+            item.mesh.position.y = window.innerHeight - (currentTop + cache.rect.height / 2);
             
             // Update Uniforms
-            item.material.uniforms.uPlaneSize.value.set(rect.width * pixelRatio, rect.height * pixelRatio);
-            
-            // Handle dynamic border radius (e.g. if modified on hover or scroll)
-            const style = window.getComputedStyle(item.dom);
-            let br = parseFloat(style.borderRadius);
-            if (isNaN(br)) br = 0;
-            item.material.uniforms.uBorderRadius.value = br * pixelRatio;
+            item.material.uniforms.uPlaneSize.value.set(cache.rect.width * pixelRatio, cache.rect.height * pixelRatio);
+            item.material.uniforms.uBorderRadius.value = cache.borderRadius * pixelRatio;
         });
     }
 
@@ -291,6 +319,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const pr = renderer.getPixelRatio();
         bgRenderTarget.setSize(width * pr, height * pr);
         globalUniforms.uResolution.value.set(width * pr, height * pr);
+
+        updateCache();
+    });
+
+    // Update cache when filter buttons are clicked
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => setTimeout(updateCache, 400));
     });
 
     // --- Animation Loop ---
